@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import ListView, DetailView, View
+from django.views.generic import ListView, DetailView, View, TemplateView
 from django.shortcuts import redirect
 from django.utils import timezone
 from .forms import CheckoutForm, CouponForm, RefundForm
@@ -105,10 +105,20 @@ class PaymentView(View):
             return redirect("/")
 
 
-class HomeView(ListView):
-    template_name = "index.html"
-    queryset = Item.objects.filter(is_active=True)
-    context_object_name = 'items'
+class HomeView(TemplateView):
+
+    def get(self, request, *args, **kwargs):
+
+        template_name = "index.html"
+
+        items = Item.objects.filter(is_active=True, is_banner=False)
+        banners = Item.objects.filter(is_active=True, is_banner=True)
+
+        context = {
+            'items': items,
+            'banners': banners
+        }
+        return render(self.request, template_name, context)
 
 
 class OrderSummaryView(LoginRequiredMixin, View):

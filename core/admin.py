@@ -72,6 +72,7 @@ class ItemAdmin(admin.ModelAdmin):
     list_display = [
         'title',
         'category',
+        'is_banner'
     ]
     list_filter = ['title', 'category']
     search_fields = ['title', 'category']
